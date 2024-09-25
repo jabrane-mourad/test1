@@ -41,4 +41,4 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           ls
-          mvn -B verify sonar:sonar -Dsonar.project.settings=./sonar-project.properties
+          mvn -B verify sonar:sonar -D"sonar.project.settings=./sonar-project.properties"
