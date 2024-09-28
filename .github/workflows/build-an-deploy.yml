@@ -27,9 +27,9 @@ jobs:
         run: |
           curl -O https://downloads.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz
           tar -xvzf apache-maven-3.9.9-bin.tar.gz
-          mv apache-maven-3.9.9 /usr/local/maven
-          echo "MAVEN_HOME=/usr/local/maven" >> $GITHUB_ENV
-          echo "/usr/local/maven/bin" >> $GITHUB_PATH
+          mv apache-maven-3.9.9 $HOME/maven
+          echo "MAVEN_HOME=$HOME/maven" >> $GITHUB_ENV
+          echo "$HOME/maven/bin" >> $GITHUB_PATH
 
       # Verify Maven Installation
       - name: Verify Maven Installation
