@@ -22,19 +22,14 @@ jobs:
         with:
           java-version: 21
 
-        # Install Homebrew (if not installed)
-      - name: Install Homebrew
+        # Install Maven manually
+      - name: Install Maven manually
         run: |
-          if ! command -v brew &> /dev/null; then
-            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          fi
-
-      # Install Maven using Homebrew
-      - name: Install Maven
-        run: |
-          brew install maven
-          echo "MAVEN_HOME=$(brew --prefix maven)" >> $GITHUB_ENV
-          echo "$(brew --prefix maven)/bin" >> $GITHUB_PATH
+          curl -O https://downloads.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz
+          tar -xvzf apache-maven-3.9.9-bin.tar.gz
+          sudo mv apache-maven-3.9.9 /usr/local/maven
+          echo "MAVEN_HOME=/usr/local/maven" >> $GITHUB_ENV
+          echo "/usr/local/maven/bin" >> $GITHUB_PATH
 
       # Verify Maven Installation
       - name: Verify Maven Installation
