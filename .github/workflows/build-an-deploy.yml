@@ -72,7 +72,7 @@ jobs:
 
       - name: Deploy to kube
         run: |
-          kubectl -- apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/deployment.yaml
 
       - name: Verify Kubernetes context
         run: |
