@@ -17,7 +17,7 @@ spec:
         - name: quality-gate-container
           image: carikk/quality-gate:latest  # Utilisez votre image Docker
           ports:
-            - containerPort: 8080
+            - containerPort: 8090
 
 ---
 apiVersion: v1
@@ -29,6 +29,6 @@ spec:
     app: quality-gate-app
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
+      port: 8090
+      targetPort: 8090
   type: LoadBalancer  # Ou ClusterIP ou NodePort selon votre besoin
