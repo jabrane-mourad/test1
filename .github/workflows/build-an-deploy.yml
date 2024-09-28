@@ -1,0 +1,65 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build, Analyze, and Deploy
+    runs-on: self-hosted
+
+    steps:
+        # Checkout code
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+        # Set up JDK 21
+      - name: Set up JDK 21
+        uses: actions/setup-java@v1
+        with:
+          java-version: 21
+
+        # Cache SonarQube dependencies
+      - name: Cache SonarQube packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+        #Setup Maven
+      - name: Setup Maven
+        shell: powershell
+        run: |
+          echo "MAVEN_HOME=$env:USERPROFILE\maven\apache-maven-3.8.8" >> $env:GITHUB_ENV
+          echo "$env:USERPROFILE\maven\apache-maven-3.8.8\bin" >> $env:GITHUB_PATH
+
+        # Build and SonarQube analysis
+      - name: Build and analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          mvn -B verify sonar:sonar -D"sonar.project.settings=./sonar-project.properties"
+
+        # Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t carikk/quality-gate:latest .
+
+        # Push Docker image to DockerHub or other container registry
+      - name: Log in to DockerHub
+        run: |
+#          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          echo "Docker2024" | docker login -u "carikk" --password-stdin
+      - name: Push Docker image
+        run: |
+          docker push carikk/quality-gate:latest
+
+        # Deploy on Minikube
+      - name: Deploy to Minikube
+        run: |
+          kubectl apply -f kubernetes/deployment.yaml

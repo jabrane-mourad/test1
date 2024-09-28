@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SonarQualityGateApplication {
 
     public static void main(String[] args) {
-        System.out.println("Application started"); // System.out instead of proper logging
         SpringApplication.run(SonarQualityGateApplication.class, args);
     }
 
