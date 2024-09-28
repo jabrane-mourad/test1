@@ -57,7 +57,18 @@ jobs:
         run: |
           docker push carikk/quality-gate:latest
 
+      - name: Set up kubectl
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          kubectl config set-context --current --namespace=ensakh
         # Deploy on Kubernetes
       - name: Deploy to kube
         run: |
           kubectl -- apply -f k8s/deployment.yaml
+
+      - name: Verify Kubernetes context
+        run: |
+          kubectl config current-context
+          kubectl get nodes
+          kubectl get namespaces
+          kubectl get pods
