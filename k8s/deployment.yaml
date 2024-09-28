@@ -29,6 +29,6 @@ spec:
     app: quality-gate-app
   ports:
     - protocol: TCP
-      port: 80
+      port: 8080
       targetPort: 8080
   type: LoadBalancer  # Ou ClusterIP ou NodePort selon votre besoin
