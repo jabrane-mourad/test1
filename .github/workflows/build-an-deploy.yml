@@ -22,27 +22,23 @@ jobs:
         with:
           java-version: 21
 
-        # Cache SonarQube dependencies
-#      - name: Cache SonarQube packages
-#        uses: actions/cache@v1
-#        with:
-#          path: ~/.sonar/cache
-#          key: ${{ runner.os }}-sonar
-#          restore-keys: ${{ runner.os }}-sonar
-#
-#        # Cache SonarQube dependencies
-#      - name: Cache Maven dependencies
-#        uses: actions/cache@v1
-#        with:
-#          path: ~/.m2
-#          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-#          restore-keys: ${{ runner.os }}-m2
-
-        #Setup Maven
-      - name: Setup Maven
+        # Install Homebrew (if not installed)
+      - name: Install Homebrew
         run: |
-          echo "MAVEN_HOME=/usr/local/apache-maven-3.8.8" >> $GITHUB_ENV
-          echo "/usr/local/apache-maven-3.8.8/bin" >> $GITHUB_PATH
+          if ! command -v brew &> /dev/null; then
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          fi
+
+      # Install Maven using Homebrew
+      - name: Install Maven
+        run: |
+          brew install maven
+          echo "MAVEN_HOME=$(brew --prefix maven)" >> $GITHUB_ENV
+          echo "$(brew --prefix maven)/bin" >> $GITHUB_PATH
+
+      # Verify Maven Installation
+      - name: Verify Maven Installation
+        run: mvn -version
 
         # Build and SonarQube analysis
       - name: Build and analyze
