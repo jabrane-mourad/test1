@@ -40,10 +40,9 @@ jobs:
 
         #Setup Maven
       - name: Setup Maven
-        shell: powershell
         run: |
-          echo "MAVEN_HOME=$env:USERPROFILE\maven\apache-maven-3.8.8" >> $env:GITHUB_ENV
-          echo "$env:USERPROFILE\maven\apache-maven-3.8.8\bin" >> $env:GITHUB_PATH
+          echo "MAVEN_HOME=/usr/local/apache-maven-3.8.8" >> $GITHUB_ENV
+          echo "/usr/local/apache-maven-3.8.8/bin" >> $GITHUB_PATH
 
         # Build and SonarQube analysis
       - name: Build and analyze
@@ -60,14 +59,13 @@ jobs:
 
         # Push Docker image to DockerHub or other container registry
       - name: Log in to DockerHub
-        shell: powershell
         run: |
-          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
       - name: Push Docker image
         run: |
           docker push carikk/quality-gate:latest
 
-        # Deploy on Minikube
-      - name: Deploy to Minikube
+        # Deploy on Kubernetes
+      - name: Deploy to kube
         run: |
-          minikube kubectl -- apply -f k8s/deployment.yaml
+          kubectl -- apply -f k8s/deployment.yaml
