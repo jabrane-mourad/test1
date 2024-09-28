@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring-boot-app
+  name: quality-gate-app
   namespace: ensakh
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: spring-boot-app
+      app: quality-gate-app
   template:
     metadata:
       labels:
-        app: spring-boot-app
+        app: quality-gate-app
     spec:
       containers:
-        - name: spring-boot-container
+        - name: quality-gate-container
           image: carikk/quality-gate:latest  # Utilisez votre image Docker
           ports:
             - containerPort: 8080
@@ -23,10 +23,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: spring-boot-service
+  name: quality-gate-service
 spec:
   selector:
-    app: spring-boot-app
+    app: quality-gate-app
   ports:
     - protocol: TCP
       port: 80
