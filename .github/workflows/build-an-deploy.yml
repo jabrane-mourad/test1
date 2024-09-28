@@ -59,7 +59,7 @@ jobs:
 
       - name: Set up kubectl
         run: |
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          export KUBECONFIG=$HOME/.kube/config
           kubectl config set-context --current --namespace=ensakh
         # Deploy on Kubernetes
       - name: Deploy to kube
