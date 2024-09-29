@@ -23,18 +23,24 @@ jobs:
           java-version: 1.8
 
         # Install Maven manually
-      # Bypass execution policy and install Maven manually
       - name: Download and Install Maven
         shell: cmd
         run: |
           curl -L -o maven.zip https://downloads.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.zip
           tar -xf maven.zip
 
+      # Set up environment variables properly
       - name: Set up environment variables
         shell: cmd
         run: |
-          echo MAVEN_HOME=%cd%\apache-maven-3.8.8 >> %GITHUB_ENV%
-          echo %cd%\apache-maven-3.8.8\bin >> %GITHUB_PATH%
+          setx MAVEN_HOME "%cd%\apache-maven-3.8.8"
+          setx PATH "%PATH%;%cd%\apache-maven-3.8.8\bin"
+
+      # Verify Maven Installation
+      - name: Verify Maven Installation
+        shell: cmd
+        run: |
+          %cd%\apache-maven-3.8.8\bin\mvn -version
 #      - name: Setup Maven
 #        shell: powershell
 #        run: |
@@ -52,11 +58,7 @@ jobs:
 #          echo "MAVEN_HOME=$HOME/maven" >> $GITHUB_ENV
 #          echo "$HOME/maven/bin" >> $GITHUB_PATH
 
-      # Verify Maven Installation
-      - name: Verify Maven Installation
-        shell: cmd
-        run: |
-          mvn -version
+
 
 
         # Build and SonarQube analysis
