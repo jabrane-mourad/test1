@@ -24,16 +24,17 @@ jobs:
 
         # Install Maven manually
       # Bypass execution policy and install Maven manually
-      # Install Maven by downloading and extracting manually
-      - name: Download Maven
+      - name: Download and Install Maven
+        shell: cmd
         run: |
           curl -L -o maven.zip https://downloads.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.zip
           tar -xf maven.zip
 
       - name: Set up environment variables
+        shell: cmd
         run: |
-          echo "MAVEN_HOME=$PWD/apache-maven-3.8.8" >> $GITHUB_ENV
-          echo "$PWD/apache-maven-3.8.8/bin" >> $GITHUB_PATH
+          echo MAVEN_HOME=%cd%\apache-maven-3.8.8 >> %GITHUB_ENV%
+          echo %cd%\apache-maven-3.8.8\bin >> %GITHUB_PATH%
 #      - name: Setup Maven
 #        shell: powershell
 #        run: |
