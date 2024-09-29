@@ -54,7 +54,10 @@ jobs:
 
       # Verify Maven Installation
       - name: Verify Maven Installation
-        run: mvn -version
+        shell: cmd
+        run: |
+          mvn -version
+
 
         # Build and SonarQube analysis
       - name: Build and analyze
