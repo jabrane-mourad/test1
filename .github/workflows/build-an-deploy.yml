@@ -11,8 +11,10 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Set PowerShell execution policy
-        shell: cmd
+#      - name: Set PowerShell execution policy
+#        run: |
+#          Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+
         # Checkout code
       - uses: actions/checkout@v4
         with:
@@ -70,7 +72,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           mvn -B verify sonar:sonar -D"sonar.project.settings=./sonar-project.properties"
-
+        shell: cmd
         # Build Docker image
       - name: Build Docker image
         run: |
