@@ -11,11 +11,8 @@ jobs:
     runs-on: self-hosted
 
     steps:
-#      - name: Set PowerShell execution policy
-#        run: |
-#          Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
 
-        # Checkout code
+      # Checkout code
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
@@ -26,50 +23,11 @@ jobs:
         with:
           java-version: 21
 
-        # Install Maven manually
-#      - name: Download and Install Maven
-#        shell: cmd
-#        run: |
-#          curl -L -o maven.zip https://downloads.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.zip
-#          tar -xf maven.zip
-#
-#      # Set up environment variables properly
-#      - name: Set up environment variables
-#        shell: cmd
-#        run: |
-#          setx MAVEN_HOME "%cd%\apache-maven-3.8.8"
-#          setx PATH "%PATH%;%cd%\apache-maven-3.8.8\bin"
-#
-#      # Verify Maven Installation
-#      - name: Verify Maven Installation
-#        shell: cmd
-#        run: |
-#          %cd%\apache-maven-3.8.8\bin\mvn -version
-
       - name: Setup Maven
         shell: powershell
         run: |
           echo "MAVEN_HOME=$env:USERPROFILE\maven\apache-maven-3.8.8" >> $env:GITHUB_ENV
           echo "$env:USERPROFILE\maven\apache-maven-3.8.8\bin" >> $env:GITHUB_PATH
-#      - name: Setup Maven
-#        shell: powershell
-#        run: |
-#          Invoke-WebRequest -Uri "https://downloads.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.zip" -OutFile "maven.zip"
-#          Expand-Archive -Path "maven.zip" -DestinationPath "$env:USERPROFILE\maven"
-#          echo "MAVEN_HOME=$env:USERPROFILE\maven\apache-maven-3.8.8" >> $env:GITHUB_ENV
-#          echo "$env:USERPROFILE\maven\apache-maven-3.8.8\bin" >> $env:GITHUB_PATH
-
-#      - name: Install Maven manually for macos runners
-#        run: |
-#          rm -rf $HOME/maven/apache-maven-3.8.8
-#          curl -O https://downloads.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz
-#          tar -xvzf apache-maven-3.8.8-bin.tar.gz
-#          mv apache-maven-3.8.8 $HOME/maven
-#          echo "MAVEN_HOME=$HOME/maven" >> $GITHUB_ENV
-#          echo "$HOME/maven/bin" >> $GITHUB_PATH
-
-
-
 
         # Build and SonarQube analysis
       - name: Build and analyze
@@ -79,19 +37,20 @@ jobs:
         run: |
           mvn -B verify sonar:sonar -Dsonar.project.settings=./sonar-project.properties
         shell: cmd
+
         # Build Docker image
       - name: Build Docker image
         run: |
           docker build -t carikk/quality-gate:latest .
-
         # Push Docker image to DockerHub or other container registry
       - name: Log in to DockerHub
         shell: powershell
         run: |
-          echo "Docker2024" | docker login -u "bouzoubaa.ysn@gmail.com" --password-stdin
+          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
       - name: Push Docker image
         run: |
           docker push carikk/quality-gate:latest
+
 
       # Set up kubeconfig from secret
       - name: Set up kubeconfig
